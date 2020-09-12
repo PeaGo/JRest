@@ -49,6 +49,7 @@ class WelcomeController
         // return $response->withJson(['articles' => $list, 'articlesCount' => 20]);
         // $jOnes = JOneSignal();
         // var_dump($this->notification);
+        $this->notification->trigger(['email']);
         return $response->getBody()->write('Welcome to JRest API');
     }
 }
