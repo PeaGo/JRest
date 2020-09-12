@@ -1,0 +1,14 @@
+vendor/
+logs/
+upload/
+public/
+report/
+.project
+config.php
+setting.json
+.DS_Store
+config.json
+logs.txt
+.buildpath
+.settings/org.eclipse.php.core.prefs
+.settings/org.eclipse.wst.common.project.facet.core.xml
