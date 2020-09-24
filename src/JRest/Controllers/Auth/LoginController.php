@@ -59,10 +59,13 @@ class LoginController
         }
 
         if ($user = $this->auth->attempt($userParams['email'], $userParams['password'])) {
-            $user->token = $this->auth->generateToken($user);
+            // $user->token = $this->auth->generateToken($user);
             // $data = $this->fractal->createData(new Item($user, new UserTransformer()))->toArray();
 
-            return $response->withJson(['user' => $user]);
+            return $response->withJson([
+                'token' => $this->auth->generateToken($user),
+                'user' => $user
+            ]);
         };
 
         return $response->withJson(['errors' => ['email or password' => ['is invalid']]], 422);

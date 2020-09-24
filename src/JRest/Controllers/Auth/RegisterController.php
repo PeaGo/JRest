@@ -59,8 +59,8 @@ class RegisterController
         if ($validation->failed()) {
             return $response->withJson(['errors' => $validation->getErrors()], 422);
         }
-        $user = new User($userParams = $request->getParams());
-        $user->token = $this->auth->generateToken($user);
+        $user = new User($userParams = $request->getParsedBody());
+        // $user->token = $this->auth->generateToken($user);
         $user->password = password_hash($userParams['password'], PASSWORD_DEFAULT);
         $user->save();
 
@@ -69,6 +69,7 @@ class RegisterController
 
         return $response->withJson(
             [
+                'token' => $this->auth->generateToken($user),
                 'user' => $user,
             ]
         );

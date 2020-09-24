@@ -94,8 +94,9 @@ class Auth
     public function requestUser(Request $request)
     {
         // Should add more validation to the present and validity of the token?
+        // var_dump($request->getAttribute('token'));
         if ($token = $request->getAttribute('token')) {
-            return User::where(static::SUBJECT_IDENTIFIER, '=', $token->sub)->first();
+            return User::where(static::SUBJECT_IDENTIFIER, '=', $token['sub'])->first();
         };
     }
 
