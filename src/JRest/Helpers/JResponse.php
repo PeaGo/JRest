@@ -1,6 +1,6 @@
 <?php
 
-namespace JRest\Helper;
+namespace JRest\Helpers;
 
 use Slim\Http\Response;
 

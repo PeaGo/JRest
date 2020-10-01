@@ -4,6 +4,8 @@ namespace JRest\Controllers;
 
 // use App\Helper\JOneSignal;
 // use JRest\Helpers\JOneSignal;
+
+use JRest\Helpers\JResponse;
 use JRest\Models\Article;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
@@ -49,7 +51,33 @@ class WelcomeController
         // return $response->withJson(['articles' => $list, 'articlesCount' => 20]);
         // $jOnes = JOneSignal();
         // var_dump($this->notification);
-        $this->notification->trigger(['email']);
+        // $this->notification->trigger(['email1'], [32], null, null, false, [
+        //     'email' => [
+        //         'body' => 'ok123',
+        //         'title' => 'ok',
+        //         'subject' => 'oknhe'
+        //     ]
+        // ] );
+        try {
+            $this->notification->trigger([
+                "channels" => ['push', 'email'],
+                "receipents" => [32],
+                "customs" => [
+                    "push" => [
+                        "body" => "body push 1",
+                        "title" => "title push 1",
+                        "subject" => "subject"
+                    ],
+                    "email" => [
+                        "body" => "email body",
+                        "title" => "email title",
+                        "subject" => "email subject"
+                    ]
+                ]
+            ]);
+        } catch (\Throwable $th) {
+            return JResponse::err500($response, $th, $th->getMessage());
+        }
         return $response->getBody()->write('Welcome to JRest API');
     }
 }

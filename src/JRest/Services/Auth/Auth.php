@@ -47,7 +47,7 @@ class Auth
     public function generateToken(User $user)
     {
         $now = new DateTime();
-        $future = new DateTime("now +2 hours");
+        $future = new DateTime("now +7 days");
 
         $payload = [
             "iat" => $now->getTimeStamp(),

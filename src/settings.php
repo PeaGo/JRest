@@ -4,11 +4,13 @@
 defined('DS') ?: define('DS', DIRECTORY_SEPARATOR);
 defined('ROOT') ?: define('ROOT', dirname(__DIR__) . DS);
 
+
 // Load .env file
 if (file_exists(ROOT . '.env')) {
     $dotenv =  Dotenv\Dotenv::createImmutable(ROOT);
     $dotenv->load();
 }
+defined('DEBUG_MODE') ?: define('DEBUG_MODE', $_ENV['APP_DEBUG'] === 'true' ? 'true' : 'false');
 
 
 return [

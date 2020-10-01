@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helper;
+namespace JRest\Helpers;
 
 class JString
 {
