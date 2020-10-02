@@ -24,14 +24,8 @@ class User extends Model
      *
      * @var array
      */
-    protected $fillable = [
-        'username',
-        'email',
-        'password',
-        'token',
-        'image',
-        'bio',
-    ];
+    // protected $fillable =[];
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -56,6 +50,11 @@ class User extends Model
         }
 
         return $value;
+    }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] =  password_hash($value, PASSWORD_DEFAULT);
     }
 
 
@@ -84,7 +83,8 @@ class User extends Model
             User::class,
             'users_following',
             'user_id',
-            'following_user_id')
+            'following_user_id'
+        )
             ->withTimestamps();
     }
 
@@ -163,5 +163,4 @@ class User extends Model
             ->where('following_user_id', $this->id)
             ->exists();
     }
-
 }

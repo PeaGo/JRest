@@ -15,6 +15,7 @@ $container = $app->getContainer();
 $container->register(new \JRest\Services\Database\EloquentServiceProvider());
 $container->register(new \JRest\Services\Auth\AuthServiceProvider());
 $container->register(new \JRest\Services\Notification\NotificationServiceProvider());
+$container->register(new \JRest\Services\Authen\AuthenServiceProvider);
 
 // view renderer
 $container['renderer'] = function ($c) {

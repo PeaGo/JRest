@@ -2,6 +2,7 @@
 
 namespace JRest\Controllers\Auth;
 
+use JRest\Helpers\JResponse;
 use JRest\Models\User;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
@@ -22,9 +23,9 @@ class RegisterController
     protected $db;
 
     /**
-     * @var \JRest\Services\Auth\Auth
+     * @var \JRest\Services\Authen\Authen
      */
-    protected $auth;
+    protected $authen;
 
     /**
      * @var \JRest\Validation\Validator
@@ -42,6 +43,7 @@ class RegisterController
         $this->db = $container->get('db');
         $this->auth = $container->get('auth');
         $this->validator = $container->get('validator');
+        $this->authen = $container->get('authen');
     }
 
     /**
@@ -54,25 +56,24 @@ class RegisterController
      */
     public function register(Request $request, Response $response)
     {
-        $validation = $this->validateRegisterRequest($userParams = $request->getParams());
+        $credentials = $request->getParam('data');
+        $channel = $request->getParam('option')['type'];
+        // $validation = $this->validateRegisterRequest($credentials);
 
-        if ($validation->failed()) {
-            return $response->withJson(['errors' => $validation->getErrors()], 422);
-        }
-        $user = new User($userParams = $request->getParsedBody());
+        // if ($validation->failed()) {
+        //     return $response->withJson(['errors' => $validation->getErrors()], 422);
+        // }
         // $user->token = $this->auth->generateToken($user);
-        $user->password = password_hash($userParams['password'], PASSWORD_DEFAULT);
-        $user->save();
+        // $user->password = password_hash($userParams['password'], PASSWORD_DEFAULT);
+        // $user->save();
 
-        // $resource = new Item($user, new UserTransformer());
-        // $user = $this->fractal->createData($resource)->toArray();
-
-        return $response->withJson(
-            [
-                'token' => $this->auth->generateToken($user),
-                'user' => $user,
-            ]
-        );
+        $register = $this->authen->register($credentials, $channel);
+        if ($register['status']) {
+            $user = User::find($register['uid']);
+            return JResponse::success($response, $user, $register['message']);
+        } else {
+            return  JResponse::error($response, 400, [], $register['message']);
+        }
     }
 
     /**
@@ -87,7 +88,7 @@ class RegisterController
             $values,
             [
                 'email'    => V::noWhitespace()->notEmpty()->email()->existsInTable($this->db->table('users'), 'email'),
-                'username' => V::noWhitespace()->notEmpty()->existsInTable($this->db->table('users'), 'username'),
+                // 'username' => V::noWhitespace()->notEmpty()->existsInTable($this->db->table('users'), 'username'),
                 'password' => V::noWhitespace()->notEmpty(),
             ]
         );

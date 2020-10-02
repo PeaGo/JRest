@@ -2,6 +2,7 @@
 
 namespace JRest\Controllers\Auth;
 
+use JRest\Helpers\JResponse;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -19,8 +20,8 @@ class LoginController
     /** @var \Illuminate\Database\Capsule\Manager */
     protected $db;
 
-    /** @var \JRest\Services\Auth\Auth */
-    protected $auth;
+    /** @var \JRest\Services\Authen\Authen */
+    protected $authen;
 
     /** @var \JRest\Validation\Validator */
     protected $validator;
@@ -35,7 +36,7 @@ class LoginController
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->auth = $container->get('auth');
+        $this->authen = $container->get('authen');
         $this->db = $container->get('db');
         $this->validator = $container->get('validator');
     }
@@ -51,24 +52,23 @@ class LoginController
      */
     public function login(Request $request, Response $response)
     {
-        $userParams = $request->getParams();
-        $validation = $this->validateLoginRequest($userParams = $request->getParams());
+        $params = $request->getParams();
+        $credentials = $params['data'];
+        $channel = $params['option']['type'];
+        
 
-        if ($validation->failed()) {
-            return $response->withJson(['errors' => ['email or password' => ['is invalid']]], 422);
+        $result = $this->authen->login($credentials, $channel);
+        // return $result;
+        if ($result['status']) {
+            $user = User::find($result['uid']);
+            $token = $this->authen->generateToken($user);
+            return JResponse::success($response, array(
+                "token" => $token,
+                "user" => $user
+            ), "Login success");
+        } else {
+            return JResponse::error($response, 400, [], $result['message']);
         }
-
-        if ($user = $this->auth->attempt($userParams['email'], $userParams['password'])) {
-            // $user->token = $this->auth->generateToken($user);
-            // $data = $this->fractal->createData(new Item($user, new UserTransformer()))->toArray();
-
-            return $response->withJson([
-                'token' => $this->auth->generateToken($user),
-                'user' => $user
-            ]);
-        };
-
-        return $response->withJson(['errors' => ['email or password' => ['is invalid']]], 422);
     }
 
     /**

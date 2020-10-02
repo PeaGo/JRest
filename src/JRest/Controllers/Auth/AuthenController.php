@@ -2,7 +2,7 @@
 
 namespace JRest\Controllers\Auth;
 
-use JRest\Helper\JResponse;
+use JRest\Helpers\JResponse;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -15,15 +15,15 @@ class AuthenController
         $this->container = $container;
         $this->db = $container->get('db');
         $this->validator = $container->get('validator');
-        $this->auth = $container->get('auth');
+        $this->authen = $container->get('authen');
     }
 
     public function auth(Request $request, Response $response, array $args)
     {
         try {
             //code...
-            $user = $this->auth->requestUser($request);
-            $new_token = $this->auth->generateToken($user);
+            $user = $this->authen->requestUser($request);
+            $new_token = $this->authen->generateToken($user);
             return JResponse::success($response, ['token' => $new_token, 'user' => $user], 'Authenticate success');
         } catch (\Throwable $th) {
             //throw $th;
