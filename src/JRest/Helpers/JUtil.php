@@ -47,6 +47,38 @@ class JUtil
         }
         return $data;
     }
+    private static function checkPunc($num)
+    {
+
+        if (($num >= 33) && ($num <= 47)) {
+            return true;
+        }
+        if (($num >= 58) && ($num <= 64)) {
+            return true;
+        }
+        if (($num >= 91) && ($num <= 96)) {
+            return true;
+        }
+        if (($num >= 123) && ($num <= 126)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function getRandomCode($length = 8)
+    {
+
+        $sCode = "";
+        for ($i = 0; $i < $length; $i++) {
+            $numI = self::getRandomNum();
+            while (self::checkPunc($numI)) {
+                $numI = self::getRandomNum();
+            }
+            $sCode = $sCode . mb_chr($numI);
+        }
+        return $sCode;
+    }
 
     private static function getRandomNum()
     {

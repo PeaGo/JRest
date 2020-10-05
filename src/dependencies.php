@@ -16,6 +16,7 @@ $container->register(new \JRest\Services\Database\EloquentServiceProvider());
 $container->register(new \JRest\Services\Auth\AuthServiceProvider());
 $container->register(new \JRest\Services\Notification\NotificationServiceProvider());
 $container->register(new \JRest\Services\Authen\AuthenServiceProvider);
+$container->register(new \JRest\Services\Loyalty\LoyaltyServiceProvider);
 
 // view renderer
 $container['renderer'] = function ($c) {
@@ -50,4 +51,3 @@ $container['optionalAuth'] = function ($c) {
 $container['validator'] = function ($c) {
     return new \JRest\Validation\Validator();
 };
-

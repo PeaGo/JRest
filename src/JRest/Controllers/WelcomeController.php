@@ -23,6 +23,8 @@ class WelcomeController
     protected $fractal;
     /** @var \JRest\Services\Notification */
     protected $notification;
+    /** @var \JRest\Services\Loyalty */
+    protected $loyalty;
 
     public function __construct(ContainerInterface $container)
     {
@@ -32,6 +34,7 @@ class WelcomeController
         // $this->db = $container->get('db');
         // $this->db = $container->get('settings');
         $this->notification = $container->get('notification');
+        $this->loyalty = $container->get('loyalty');
     }
 
     /**
@@ -59,22 +62,24 @@ class WelcomeController
         //     ]
         // ] );
         try {
-            $this->notification->trigger([
-                "channels" => ['push', 'email'],
-                "receipents" => [32],
-                "customs" => [
-                    "push" => [
-                        "body" => "body push 1",
-                        "title" => "title push 1",
-                        "subject" => "subject"
-                    ],
-                    "email" => [
-                        "body" => "email body",
-                        "title" => "email title",
-                        "subject" => "email subject"
-                    ]
-                ]
-            ]);
+            // $this->notification->trigger([
+            //     "channels" => ['push', 'email'],
+            //     "receipents" => [32],
+            //     "customs" => [
+            //         "push" => [
+            //             "body" => "body push 1",
+            //             "title" => "title push 1",
+            //             "subject" => "subject"
+            //         ],
+            //         "email" => [
+            //             "body" => "email body",
+            //             "title" => "email title",
+            //             "subject" => "email subject"
+            //         ]
+            //     ]
+            // ]);
+            $coupons = $this->loyalty->listUsableCoupons(972);
+            return JResponse::success($response, $coupons, '');
         } catch (\Throwable $th) {
             return JResponse::err500($response, $th, $th->getMessage());
         }
